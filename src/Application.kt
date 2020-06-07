@@ -41,7 +41,7 @@ class UserPage()
 class Delete(val id: Int)
 
 @Location("/calc")
-class Calc()
+data class Calc(val error: String = "")
 
 @Location("/edit")
 class Edit(val id: Int)

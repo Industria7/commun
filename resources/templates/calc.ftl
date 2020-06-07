@@ -1,5 +1,22 @@
 <#import "template.ftl" as layout />
 <@layout.mainLayout title="Калькулятор">
+<#if data??>
+    <table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Газ</th>
+            <th scope="col">Вода</th>
+            <th scope="col">Электричество</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>${data.gas} Руб</td>
+            <td>${data.water} Руб</td>
+            <td>${data.elec} Руб</td>
+        </tr>
+<#else>
+    <#if tarif??>
     <table class="table">
     <thead class="thead-dark">
         <tr>
@@ -14,7 +31,6 @@
         </tr>
     </thead>
     <tbody>
-    <#if tarif??>
         <tr>
             <td>${tarif.date}</td>
             <td>${tarif.gas}</td>
@@ -31,11 +47,11 @@
             <label for="gas">Газ</label>
             <input type="number" class="form-control" id="gas" name="gas" placeholder="Введите количество кубов" value="">
         </div>
-        <div class="form-group2">
+        <div class="form-group1">
             <label for="water">Вода</label>
             <input type="number" class="form-control" id="water" name="water" placeholder="Введите количество кубов" value="">
         </div>
-        <div class="form-group3">
+        <div class="form-group1">
             <label for="elec">Электричество</label>
             <input type="number" class="form-control" id="elec" name="elec" placeholder="Введите количество киловат" value="">
         </div>
@@ -43,4 +59,5 @@
         <input type="hidden" id="id" name="id" value="<#if tarif??>${tarif.id}</#if>">
         <button type="submit" class="btn btn-primary">Подсчитать</button>
     </form>
+</#if>
 </@layout.mainLayout>

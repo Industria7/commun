@@ -33,6 +33,9 @@
             </#if>
         </ul>
     <div class="container">
+        <#if error??>
+            <div><p class="error">${error}</p></div>
+        </#if>
         <div class="row m-1">
             <#nested/>
         </div>

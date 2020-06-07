@@ -7,29 +7,16 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.get
 import io.ktor.sessions.sessions
-import model.Setting
+import io.ktor.sessions.set
+import model.*
 import org.joda.time.DateTime
+import java.lang.NumberFormatException
 import kotlin.random.Random
 
 fun Route.calc() {
     get<Calc> {
-//        val action = (call.request.queryParameters["action"] ?: "new")
-//        when(action){
-//            "new" -> call.respond(FreeMarkerContent("employee.ftl",
-//                    mapOf("action" to action)))
-//            "edit" -> {
-//                val id = call.request.queryParameters["id"]
-//                if(id != null){
-//                    call.respond(FreeMarkerContent("employee.ftl",
-//                            mapOf("employee" to dao.getEmployee(id.toInt()),
-//                                    "action" to action)))
-//                }
-//            }
-//        }
-
         val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
         if(user == null) {
-//            println("Сессии нет")
             call.redirect(Login())
         } else {
             val sett = dao.getSettings(user.id)
@@ -40,18 +27,36 @@ fun Route.calc() {
     }
 
     post<Calc>{
-        val postParameters: Parameters = call.receiveParameters()
-        println(postParameters)
-        val action = postParameters["action"] ?: "new"
-//        when(action){
-//            "new" -> dao.createEmployee(postParameters["name"] ?: "", postParameters["email"] ?: "", postParameters["city"] ?: "")
-//            "edit" ->{
-//                val id = postParameters["id"]
-//                if(id != null)
-//                    dao.updateEmployee(id.toInt(), postParameters["name"] ?: "", postParameters["email"] ?: "", postParameters["city"] ?: "")
-//            }
-//        }
-        val text = ""
-        call.respond(FreeMarkerContent("calc.ftl", mapOf("text" to text ) ) )
+        val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
+        if(user == null) {
+            call.redirect(Login())
+        } else {
+        val calc: Parameters = call.receiveParameters()
+        println(calc)
+
+        val error = Calc()
+
+            val g = calc["gas"] ?: return@post call.redirect(error.copy(error = "Введиде показания Газа"))
+            val w = calc["water"] ?: return@post call.redirect(error.copy(error = "Введиде показания Воды"))
+            val e = calc["elec"] ?: return@post call.redirect(error.copy(error = "Введиде показания Электричества"))
+            val t = calc["id"] ?: return@post call.redirect(error.copy(error = "Выберите Тариф"))
+        try {
+            val gs = g.toInt()
+            val wt = w.toInt()
+            val el = e.toInt()
+            val tr = t.toInt()
+
+            val inf = Info(gs ,wt ,el, tr)
+            val tar = dao.getTarif(tr)
+
+            if (tar != null) {
+                val data = calculate(tar, inf)
+                call.respond(FreeMarkerContent("calc.ftl", mapOf("user" to user, "data" to data ) ) )
+            }
+
+        } catch (e: NumberFormatException){
+            call.redirect(error.copy(error = "Неправильный формат числа"))
+        }
+        }
     }
 }

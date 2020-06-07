@@ -2,7 +2,9 @@ import model.*
 import dao.*
 import org.joda.time.DateTime
 
-data class resCalc(val gas: Double,val water: Double,val elec: Double)
+data class resCalc(val gas: Double,
+                   val water: Double,
+                   val elec: Double)
 
 fun calculate(tarif: Tarif, info : Info) = resCalc(
         tarif.gas * info.gas,
