@@ -52,9 +52,6 @@ class Graf()
 @Location("/invoice")
 class Invoice()
 
-@Location("/setting")
-class Setting()
-
 @Location("/logout")
 class Logout()
 
@@ -80,7 +77,7 @@ val hmacKey = SecretKeySpec(hashKey, "HmacSHA1")
  * Constructs a facade with the database, connected to the DataSource configured earlier with the [dir]
  * for storing the database.
  */
-val ConnectionString = "jdbc:h2:file:${dir.canonicalFile.absolutePath}"
+val ConnectionString = "jdbc:h2:file:${dir.canonicalFile.absolutePath};DB_CLOSE_DELAY=-1"
 val dao: DAOFacade = DAOFacadeDatabase(Database.connect(ConnectionString, driver = "org.h2.Driver"))
 
 fun Application.main() {
@@ -154,7 +151,6 @@ fun Application.mainWithDependencies(dao: DAOFacade) {
         edit()
         graf()
         invoice()
-        setting()
     }
 }
 

@@ -15,6 +15,9 @@
     <body>
         <ul id="navbar">
             <li><a href="/">Главная</a></li>
+            <li><a href="/calc">Калькулятор</a></li>
+            <li><a href="/grafics">Графики</a></li>
+            <li><a href="/invoice">Квитанции</a></li>
             <#if user??>
             <span class="right">
             <li><a href="/user">[${user.name}]</a>

@@ -22,7 +22,7 @@ fun Route.calc() {
             val sett = dao.getSettings(user.id)
 
             val tarif = dao.getTarif(sett!!.tarif)
-            call.respond(FreeMarkerContent("calc.ftl", mapOf("user" to user, "setting" to sett, "tarif" to tarif, "oldPay" to dao.getOldInfo(sett.old_pay_Date) ) ) )
+            call.respond(FreeMarkerContent("calc.ftl", mapOf("user" to user, "setting" to sett, "tarif" to tarif, "oldPay" to dao.getOldInfo(sett.old_pay_Date), "error" to it.error ) ) )
         }
     }
 
