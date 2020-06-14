@@ -1,16 +1,11 @@
 package dao
 
-import org.jetbrains.exposed.dao.*
 import model.*
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.SortOrder.*
-import org.jetbrains.exposed.sql.transactions.transactionManager
 import org.joda.time.*
 import java.io.*
 import kotlin.io.*
-import kotlin.reflect.jvm.internal.impl.util.ValueParameterCountCheck
 
 interface DAOFacade : Closeable {
     fun init()
@@ -18,7 +13,7 @@ interface DAOFacade : Closeable {
     fun newUser(user: User): Int
     fun user(login: String, hash: String? = null): User?
 
-    fun setSettings(userId : Int, sett: Setting)
+    fun setSettings(userId : Int, setting: Setting, oldSetting : Setting? = null)
     fun getSettings(userId : Int): Setting?
 
     fun newTarif(userId : Int, t : Tarif): Int
@@ -63,44 +58,44 @@ class DAOFacadeDatabase(val db: Database = Database.connect("jdbc:h2:mem:test", 
         }[Users.id]
     }
 
-    override fun setSettings(userId: Int, sett: Setting) {
+    override fun setSettings(userId: Int, setting: Setting, oldSetting : Setting?) {
         transaction {
             addLogger(StdOutSqlLogger)
-            val oldSetting = getSettings(userId)
+//            val oldSetting = getSettings(userId)
             println("$oldSetting")
             if (oldSetting == null){
                 Settings.insert {
                     it[Settings.userId] = userId
-                    it[Settings.tarif] = sett.tarif
-                    if(sett.old_pay_Date != null) it[Settings.old_pay_Date] = sett.old_pay_Date
-                    if(sett.adress != null) it[Settings.adress] = sett.adress
-                    if(sett.waterFIO != null) it[Settings.waterFIO] = sett.waterFIO
-                    if(sett.waterLS != null) it[Settings.waterLS] = sett.waterLS
-                    if(sett.gasFIO != null) it[Settings.gasFIO] = sett.gasFIO
-                    if(sett.gasLS != null) it[Settings.gasLS] = sett.gasLS
-                    if(sett.elecFIO != null) it[Settings.elecFIO] = sett.elecFIO
-                    if(sett.elecLS != null) it[Settings.elecLS] = sett.elecLS
+                    it[Settings.tarif] = setting.tarif
+                    if(setting.old_pay_Date != null) it[Settings.old_pay_Date] = setting.old_pay_Date
+                    if(setting.adress != null) it[Settings.adress] = setting.adress
+                    if(setting.waterFIO != null) it[Settings.waterFIO] = setting.waterFIO
+                    if(setting.waterLS != null) it[Settings.waterLS] = setting.waterLS
+                    if(setting.gasFIO != null) it[Settings.gasFIO] = setting.gasFIO
+                    if(setting.gasLS != null) it[Settings.gasLS] = setting.gasLS
+                    if(setting.elecFIO != null) it[Settings.elecFIO] = setting.elecFIO
+                    if(setting.elecLS != null) it[Settings.elecLS] = setting.elecLS
                 }
             }else{
                 Settings.update ({Settings.userId eq userId }){
                     it[Settings.userId] = userId
-                    if(sett.tarif != oldSetting.tarif) it[Settings.tarif] = sett.tarif
-                    if(sett.old_pay_Date != null)
-                        if(sett.old_pay_Date != oldSetting.old_pay_Date) it[Settings.old_pay_Date] = sett.old_pay_Date
-                    if(sett.adress != null)
-                        if(sett.adress != oldSetting.adress) it[Settings.adress] = sett.adress
-                    if(sett.waterFIO != null)
-                        if(sett.waterFIO != oldSetting.waterFIO) it[Settings.waterFIO] = sett.waterFIO
-                    if(sett.waterLS != null)
-                        if(sett.waterLS != oldSetting.waterLS) it[Settings.waterLS] = sett.waterLS
-                    if(sett.gasFIO != null)
-                        if(sett.gasFIO != oldSetting.gasFIO) it[Settings.gasFIO] = sett.gasFIO
-                    if(sett.gasLS != null)
-                        if(sett.gasLS != oldSetting.gasLS) it[Settings.gasLS] = sett.gasLS
-                    if(sett.elecFIO != null)
-                        if(sett.elecFIO != oldSetting.elecFIO) it[Settings.elecFIO] = sett.elecFIO
-                    if(sett.elecLS != null)
-                        if(sett.elecLS != oldSetting.elecLS) it[Settings.elecLS] = sett.elecLS
+                    if(setting.tarif != oldSetting.tarif) it[Settings.tarif] = setting.tarif
+                    if(setting.old_pay_Date != null)
+                        if(setting.old_pay_Date != oldSetting.old_pay_Date) it[Settings.old_pay_Date] = setting.old_pay_Date
+                    if(setting.adress != null)
+                        if(setting.adress != oldSetting.adress) it[Settings.adress] = setting.adress
+                    if(setting.waterFIO != null)
+                        if(setting.waterFIO != oldSetting.waterFIO) it[Settings.waterFIO] = setting.waterFIO
+                    if(setting.waterLS != null)
+                        if(setting.waterLS != oldSetting.waterLS) it[Settings.waterLS] = setting.waterLS
+                    if(setting.gasFIO != null)
+                        if(setting.gasFIO != oldSetting.gasFIO) it[Settings.gasFIO] = setting.gasFIO
+                    if(setting.gasLS != null)
+                        if(setting.gasLS != oldSetting.gasLS) it[Settings.gasLS] = setting.gasLS
+                    if(setting.elecFIO != null)
+                        if(setting.elecFIO != oldSetting.elecFIO) it[Settings.elecFIO] = setting.elecFIO
+                    if(setting.elecLS != null)
+                        if(setting.elecLS != oldSetting.elecLS) it[Settings.elecLS] = setting.elecLS
                 }
             }
 

@@ -15,8 +15,8 @@ import org.joda.time.DateTime
 
 fun Route.register(dao: DAOFacade, hashFunction: (String) -> String) {
     post<Register> {
-        val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
-//        if (user != null) return@post call.redirect(UserPage(user.login))
+        val user = call.sessions.get<UserSession>()?.let { dao.user(it.login) }
+
         if (user != null) return@post call.redirect(UserPage())
 
         val registration = call.receive<Parameters>()
@@ -51,7 +51,7 @@ fun Route.register(dao: DAOFacade, hashFunction: (String) -> String) {
                 val tarifId = dao.newTarif(userId, Tarif(DateTime.parse("2020-02-01"),2.61,32.162,0.8018,1.0904,2.6808,150,800))
                 dao.setSettings(userId, Setting(tarifId))
 
-                call.sessions.set(UserSession(newUser.login, userId))
+                call.sessions.set(UserSession(newUser.login))
 //                call.redirect(UserPage(newUser.login))
                 call.redirect(UserPage())
             }
@@ -59,7 +59,7 @@ fun Route.register(dao: DAOFacade, hashFunction: (String) -> String) {
     }
 
     get<Register> {
-        val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
+        val user = call.sessions.get<UserSession>()?.let { dao.user(it.login) }
         if (user != null) {
 //            call.redirect(UserPage(user.login))
             call.redirect(UserPage())

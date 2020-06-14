@@ -18,18 +18,22 @@ import kotlin.random.Random
 fun Route.index() {
     get<Index> {
 //        println("session")
-        val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
+        val user = call.sessions.get<UserSession>()?.let { dao.user(it.login) }
         if(user == null) {
 //            println("Сессии нет")
             call.redirect(Login())
         } else {
-            val sett = dao.getSettings(user.id)
 
-            val rand = Random.nextInt(1990,2050)
-            dao.setSettings(user.id, Setting(sett!!.tarif, DateTime.parse("$rand-04-01")))
+            val setting = dao.getSettings(user.id)
+            if(setting != null) {
+                val rand = Random.nextInt(1990, 2050)
+                dao.setSettings(user.id, Setting(setting.tarif, DateTime.parse("$rand-04-01")), setting)
 
-            val tarif = dao.getTarif(sett!!.tarif)
-            call.respond(FreeMarkerContent("index.ftl", mapOf("user" to user, "setting" to sett, "tarif" to tarif, "oldPay" to dao.getOldInfo(sett.old_pay_Date) ) ) )
+                val tarif = dao.getTarif(setting.tarif)
+                call.respond(FreeMarkerContent("index.ftl", mapOf("user" to user, "setting" to setting, "tarif" to tarif, "oldPay" to dao.getOldInfo(setting.old_pay_Date))))
+            }else{
+                call.respond(FreeMarkerContent("index.ftl", mapOf("user" to user, "setting" to setting)))
+            }
         }
     }
     // Uses the location feature to register a get route for '/'.

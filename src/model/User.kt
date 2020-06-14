@@ -9,7 +9,7 @@ import org.joda.time.DateTime
 import java.io.*
 import java.util.*
 
-//import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 //@Serializable
 data class User(val date_reg: DateTime,

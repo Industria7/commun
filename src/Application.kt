@@ -55,8 +55,8 @@ class Invoice()
 @Location("/logout")
 class Logout()
 
+data class UserSession(val login: String)
 
-data class UserSession(val Login: String, val UserId: Int)
 val hashKey = hex("6819b57a326945c1968f45236589")
 val dir = File("info")
 //val dir = File("build/db/")
@@ -121,9 +121,7 @@ fun Application.mainWithDependencies(dao: DAOFacade) {
     install(FreeMarker) {
         templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
     }
-    // Configure the session to be represented by a [KweetSession],
-    // using the SESSION cookie to store it, and transforming it to be authenticated with the [hashKey].
-    // it is sent in plain text, but since it is authenticated can't be modified without knowing the secret [hashKey].
+
     install(Sessions) {
         cookie<UserSession>("SESSION") {
             transform(SessionTransportTransformerMessageAuthentication(hashKey))
@@ -168,7 +166,7 @@ fun hash(password: String): String {
  * with [Location] using the Locations feature.
  */
 suspend fun ApplicationCall.redirect(location: Any) {
-    val host = request.host() ?: "localhost"
+    val host = request.host()
     val portSpec = request.port().let { if (it == 80) "" else ":$it" }
     val address = host + portSpec
 

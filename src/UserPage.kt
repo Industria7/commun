@@ -14,10 +14,7 @@ import io.ktor.sessions.*
 fun Route.userPage(dao: DAOFacade) {
 
     get<UserPage> {
-        val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
-//        val pageUser = dao.user(it.user)
-        val id = call.sessions.get<UserSession>()?.let { it.UserId }
-//        println("User=$user")
+        val user = call.sessions.get<UserSession>()?.let { dao.user(it.login)  }
         if (user != null) {
 
             call.respond(FreeMarkerContent("user.ftl", mapOf(

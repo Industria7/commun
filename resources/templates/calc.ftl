@@ -1,5 +1,8 @@
 <#import "template.ftl" as layout />
 <@layout.mainLayout title="Калькулятор">
+    <#if error??>
+        <p class="error">${error}</p>
+    </#if>
 <#if data??>
     <table class="table">
     <thead class="thead-dark">

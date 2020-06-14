@@ -18,7 +18,7 @@ fun Route.login(dao: DAOFacade, hash: (String) -> String) {
      * (unless the user is already logged in, in which case it would redirect to the user's page)
      */
     get<Login> {
-        val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
+        val user = call.sessions.get<UserSession>()?.let { dao.user(it.login) }
 
         if (user != null) {
 //            call.redirect(UserPage(user.login))
@@ -30,23 +30,22 @@ fun Route.login(dao: DAOFacade, hash: (String) -> String) {
 
     post<Login> {
         val post = call.receive<Parameters>()
-        val userLogin = post["login"] ?: return@post call.redirect(it)
+        val login = post["login"] ?: return@post call.redirect(it)
         val password = post["password"] ?: return@post call.redirect(it)
 
-        val error = Login(userLogin)
+        val error = Login(login)
 
-        val login = when {
-            userLogin.length < 4 -> null
+        val userIn = when {
+            login.length < 4 -> null
             password.length < 6 -> null
-            !userNameValid(userLogin) -> null
-            else -> dao.user(userLogin, hash(password))
+            !userNameValid(login) -> null
+            else -> dao.user(login, hash(password))
         }
 
-        if (login == null) {
+        if (userIn == null) {
             call.redirect(error.copy(error = "Неправильные имя пользователя или пароль"))
         } else {
-            call.sessions.set(UserSession(login.login, login.id))
-//            call.redirect(UserPage(login.login))
+            call.sessions.set(UserSession(userIn.login))
             call.redirect(UserPage())
         }
     }

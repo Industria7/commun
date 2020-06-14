@@ -15,7 +15,7 @@ import kotlin.random.Random
 
 fun Route.calc() {
     get<Calc> {
-        val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
+        val user = call.sessions.get<UserSession>()?.let { dao.user(it.login) }
         if(user == null) {
             call.redirect(Login())
         } else {
@@ -27,7 +27,7 @@ fun Route.calc() {
     }
 
     post<Calc>{
-        val user = call.sessions.get<UserSession>()?.let { dao.user(it.Login) }
+        val user = call.sessions.get<UserSession>()?.let { dao.user(it.login)  }
         if(user == null) {
             call.redirect(Login())
         } else {
