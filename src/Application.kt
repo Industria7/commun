@@ -40,6 +40,9 @@ class UserPage()
 @Location("/delete")
 class Delete(val id: Int)
 
+@Location("/add")
+class Add()
+
 @Location("/calc")
 data class Calc(val error: String = "")
 
@@ -137,6 +140,7 @@ fun Application.mainWithDependencies(dao: DAOFacade) {
     routing {
         styles()
         index()
+        add()
 
         delete()
 

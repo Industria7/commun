@@ -1,94 +1,55 @@
 <#import "template.ftl" as layout />
 
 <@layout.mainLayout title="Пользователь ${user.name}">
-    <table class="table">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">id</th>
-            <th scope="col">Дата регистрации</th>
-            <th scope="col">Имя</th>
-            <th scope="col">Логин</th>
-        </tr>
-    </thead>
-    <tbody>
-    <#if user??>
-            <tr>
-                <td>${user.id}</td>
-                <td>${user.date_reg}</td>
-                <td>${user.name}</td>
-                <td>${user.login}</td>
-            </tr>
-    <#else>Данных нет</#if>
-    </tbody>
-    </table>
+    <#if info??>
+        <div style="color: red;">${info}</div>
+    </#if>
+    <div>Ваше имя : <form method="post" action="/user">
+        <input type="text" name="name" value="${user.name}" minlength="3" maxlength="15" class="form-control" placeholder="Введите имя" required="" autocomplete="off">
+        <input type="hidden" id="action" name="action" value="name">
+        <button type="submit">Изменить имя</button>
+    </form>
+    </div>
 
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">Тариф</th>
-                <th scope="col">Дата посл. платежа</th>
-                <th scope="col">Адрес</th>
-                <th scope="col">Вода ФИО</th>
-                <th scope="col">Вода ЛС</th>
-                <th scope="col">Газ ФИО</th>
-                <th scope="col">Газ ЛС</th>
-                <th scope="col">Электр. ФИО</th>
-                <th scope="col">Электр. ЛС</th>
-            </tr>
-        </thead>
-        <tbody>
-    <#if setting??>
-            <tr>
-                <td>${setting.tarif}</td>
-                <td><#if setting.old_pay_Date??>${setting.old_pay_Date}<#else>Нету</#if></td>
-                <td><#if setting.adress??>${setting.adress}<#else>Нету</#if></td>
-                <td><#if setting.waterFIO??>${setting.waterFIO}<#else>Нету</#if></td>
-                <td><#if setting.waterLS??>${setting.waterLS}<#else>Нету</#if></td>
-                <td><#if setting.gasFIO??>${setting.gasFIO}<#else>Нету</#if></td>
-                <td><#if setting.gasLS??>${setting.gasLS}<#else>Нету</#if></td>
-                <td><#if setting.elecFIO??>${setting.elecFIO}<#else>Нету</#if></td>
-                <td><#if setting.elecLS??>${setting.elecLS}<#else>Нету</#if></td>
-            </tr>
-    <#else>Настроек нет</#if>
-    </tbody>
-    </table>
+    <div><p>Дата регистрации : ${user.date_reg}</p></div>
 
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Дата</th>
-                <th scope="col">Газ</th>
-                <th scope="col">Вода</th>
-                <th scope="col">Электр. 1</th>
-                <th scope="col">Электр. 2</th>
-                <th scope="col">Электр. 3</th>
-                <th scope="col">Электр. порог 1</th>
-                <th scope="col">Электр. порог 2</th>
-            </tr>
-        </thead>
-        <tbody>
-    <#if tarifs??>
-        <#list tarifs as tarif>
-            <tr>
-                <td>${tarif.id}</td>
-                <td>${tarif.date}</td>
-                <td>${tarif.gas}</td>
-                <td>${tarif.water}</td>
-                <td>${tarif.elec1}</td>
-                <td>${tarif.elec2}</td>
-                <td>${tarif.elec3}</td>
-                <td>${tarif.elec_level1}</td>
-                <td>${tarif.elec_level2}</td>
-            </tr>
-        </#list>
-    <#else>Тарифов нет</#if>
-
-    </tbody>
-    </table>
-    <div class="container">
-        <div class="row">
-            <a href="/" class="btn btn-secondary float-right" role="button">Сохранить</a>
+    <div><p>Дата последнего платежа : <#if setting.old_pay_Date??>${setting.old_pay_Date}<#else>Нету</#if></p>
+        <p>Адресс : <#if setting.adress??>${setting.adress}<#else>Нету</#if></p>
+        <p>Вода ФИО : <#if setting.waterFIO??>${setting.waterFIO}<#else>Нету</#if></p>
+        <p>Вода ЛС : <#if setting.waterLS??>${setting.waterLS}<#else>Нету</#if></p>
+        <p>Газ ФИО : <#if setting.gasFIO??>${setting.gasFIO}<#else>Нету</#if></p>
+        <p>Газ ЛС : <#if setting.gasLS??>${setting.gasLS}<#else>Нету</#if></p>
+        <p>Электричество ФИО : <#if setting.elecFIO??>${setting.elecFIO}<#else>Нету</#if></p>
+        <p>Электричество ЛС : <#if setting.elecLS??>${setting.elecLS}<#else>Нету</#if></p>
         </div>
+
+    <div><p>Выбран тариф : ${tarif.date} <a href="./edit"><span>Изменить</span></a></p></div>
+
+    <div>Выбран тариф : <form method="post" action="/user">
+        <input type="date" name="name" value="${tarif.date}" required="" autocomplete="off">
+        <input type="hidden" id="action" name="action" value="tarif">
+        <button type="submit">Выбрать тариф</button>
+    </form>
+    </div>
+
+    <div><p>Газ : ${tarif.gas}</p></div>
+    <div><p>Вода : ${tarif.water}</p></div>
+
+    <div><p>Электричество ур. 1 : ${tarif.elec1}</p></div>
+    <div><p>Электричество ур. 2 : ${tarif.elec2}</p></div>
+    <div><p>Электричество ур. 3 : ${tarif.elec3}</p></div>
+
+    <div><p>Электричество порог 1 : ${tarif.elec_level1}</p></div>
+    <div><p>Электричество порог 2 : ${tarif.elec_level2}</p></div>
+    
+    <div>
+      <label for="country">Страна</label>
+      <select name="country">
+        <option>Выберите страну проживания</option>
+        <option value="1">Россия</option>
+        <option value="2">Украина</option>
+        <option value="3">Беларусь</option>
+      </select> 
+      <div class="select-arrow"></div> 
     </div>
 </@layout.mainLayout>

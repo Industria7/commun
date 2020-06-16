@@ -5,6 +5,8 @@ import io.ktor.locations.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import dao.*
+import io.ktor.request.receive
+import io.ktor.request.receiveParameters
 import io.ktor.sessions.*
 
 /**
@@ -15,21 +17,70 @@ fun Route.userPage(dao: DAOFacade) {
 
     get<UserPage> {
         val user = call.sessions.get<UserSession>()?.let { dao.user(it.login)  }
-        if (user != null) {
+        if (user == null) return@get call.redirect(Login())
 
-            call.respond(FreeMarkerContent("user.ftl", mapOf(
-                    "user" to user,
-                    "tarifs" to dao.getAllTarifs(user.id),
-                    "setting" to dao.getSettings(user.id)
-            )
-            ))
-        }else{
-            call.redirect(Login())
+        println("get")
+        val setting = dao.getSettings(user.id)
+        val tarif = setting?.let { dao.getTarif(setting.tarif) }
+
+        val action = (call.request.queryParameters["action"] ?: "show")
+        when(action){
+            "show" -> {
+                call.respond(FreeMarkerContent("user.ftl", mapOf(
+                        "action" to action,
+                        "user" to user,
+                        "tarif" to tarif,
+                        "setting" to setting
+                )
+                ))
+            }
+            "edit" -> {
+                val id = call.request.queryParameters["id"]
+                if(id != null){
+                    call.respond(FreeMarkerContent("employee.ftl",
+                            mapOf("action" to action)))
+                }
+            }
+            "name" -> {
+
+            }
         }
-//        if (it.user == null) {
-//            call.respond(HttpStatusCode.NotFound.description("Пользователь ${it.user} не существует"))
-//        } else {
-//            call.respond(FreeMarkerContent("user.ftl", mapOf("user" to user)))
-//        }
+    }
+
+    post<UserPage> {
+        var user = call.sessions.get<UserSession>()?.let { dao.user(it.login)  }
+        if (user == null) return@post call.redirect(Login())
+
+        println("post")
+        val setting = dao.getSettings(user.id)
+        val tarif = setting?.let { dao.getTarif(setting.tarif) }
+
+        val postParameters: Parameters = call.receiveParameters()
+        val action = postParameters["action"] ?: "show"
+        println("$action")
+
+
+        when(action){
+            "name" -> {
+                val nm = postParameters["name"] ?: ""
+                if(nm != "" && nm != user.name) {
+                    dao.setName(user.id,postParameters["name"] ?: "")
+                    user.name = nm
+                }
+            }
+//            "edit" ->{
+//                val id = postParameters["id"]
+//                if(id != null)
+//                    dao.updateEmployee(id.toInt(), postParameters["name"] ?: "", postParameters["email"] ?: "", postParameters["city"] ?: "")
+//            }
+        }
+
+        call.respond(FreeMarkerContent("user.ftl",
+                mapOf("action" to action,
+                      "user" to user,
+                      "tarif" to tarif,
+                      "setting" to setting)
+        )
+        )
     }
 }

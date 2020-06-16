@@ -8,10 +8,9 @@ import io.ktor.routing.*
 import dao.*
 import model.*
 import io.ktor.sessions.*
-import io.ktor.util.*
 import model.Setting
-import org.jetbrains.exposed.sql.Date
 import org.joda.time.DateTime
+import java.time.LocalDate.now
 
 fun Route.register(dao: DAOFacade, hashFunction: (String) -> String) {
     post<Register> {

@@ -13,6 +13,8 @@ interface DAOFacade : Closeable {
     fun newUser(user: User): Int
     fun user(login: String, hash: String? = null): User?
 
+    fun setName(userId: Int, name : String)
+
     fun setSettings(userId : Int, setting: Setting, oldSetting : Setting? = null)
     fun getSettings(userId : Int): Setting?
 
@@ -56,6 +58,16 @@ class DAOFacadeDatabase(val db: Database = Database.connect("jdbc:h2:mem:test", 
             it[login] = user.login
             it[pass] = user.pass
         }[Users.id]
+    }
+
+    override fun setName(userId: Int, name : String){
+        transaction{
+            addLogger(StdOutSqlLogger)
+            Users.update ({Users.id eq userId }){
+                if(name != "") it[Users.name] = name
+            }
+
+        }
     }
 
     override fun setSettings(userId: Int, setting: Setting, oldSetting : Setting?) {
